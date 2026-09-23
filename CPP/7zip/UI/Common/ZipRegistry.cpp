@@ -22,7 +22,7 @@ using namespace NRegistry;
 static NSynchronization::CCriticalSection g_CS;
 #define CS_LOCK NSynchronization::CCriticalSectionLock lock(g_CS);
 
-static LPCTSTR const kCuPrefix = TEXT("Software") TEXT(STRING_PATH_SEPARATOR) TEXT("7-Zip-Zstandard") TEXT(STRING_PATH_SEPARATOR);
+static LPCTSTR const kCuPrefix = TEXT("Software") TEXT(STRING_PATH_SEPARATOR) TEXT("ZaZ") TEXT(STRING_PATH_SEPARATOR);
 
 static CSysString GetKeyPath(LPCTSTR path) { return kCuPrefix + (CSysString)path; }
 
@@ -202,6 +202,73 @@ UInt32 Read_LimitGB()
   if (OpenMainKey(key, kKeyName) == ERROR_SUCCESS)
     key.GetValue_UInt32_IfOk(kMemLimit, v);
   return v;
+}
+
+void SavePassword(const UString &password)
+{
+  if (password.IsEmpty())
+    return;
+  CS_LOCK
+  CKey key;
+  CreateMainKey(key, TEXT("SavedPasswords"));
+  UStringVector list;
+  key.GetValue_Strings(TEXT("List"), list);
+  for (unsigned i = 0; i < list.Size(); i++)
+  {
+    if (list[i] == password)
+      return;
+  }
+  list.Add(password);
+  key.SetValue_Strings(TEXT("List"), list);
+}
+
+void LoadSavedPasswords(UStringVector &passwords)
+{
+  passwords.Clear();
+  passwords.Add(L"online-fix.me");
+  passwords.Add(L"cs.rin.ru");
+
+  CS_LOCK
+  {
+    CKey key;
+    if (OpenMainKey(key, TEXT("SavedPasswords")) == ERROR_SUCCESS)
+    {
+      UStringVector list;
+      key.GetValue_Strings(TEXT("List"), list);
+      for (unsigned i = 0; i < list.Size(); i++)
+      {
+        if (!list[i].IsEmpty())
+        {
+          bool exists = false;
+          for (unsigned j = 0; j < passwords.Size(); j++)
+            if (passwords[j] == list[i]) { exists = true; break; }
+          if (!exists)
+            passwords.Add(list[i]);
+        }
+      }
+    }
+  }
+
+  {
+    CKey key;
+    if (key.Open(HKEY_CURRENT_USER, TEXT("Software\\WinRAR\\Passwords"), KEY_READ) == ERROR_SUCCESS)
+    {
+      CSysStringVector valueNames;
+      key.EnumValues(valueNames);
+      for (unsigned i = 0; i < valueNames.Size(); i++)
+      {
+        UString val;
+        if (key.QueryValue(valueNames[i], val) == ERROR_SUCCESS && !val.IsEmpty())
+        {
+          bool exists = false;
+          for (unsigned j = 0; j < passwords.Size(); j++)
+            if (passwords[j] == val) { exists = true; break; }
+          if (!exists)
+            passwords.Add(val);
+        }
+      }
+    }
+  }
 }
 
 }

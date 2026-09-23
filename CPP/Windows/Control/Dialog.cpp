@@ -43,6 +43,23 @@ DialogProcedure(HWND dialogHWND, UINT message, WPARAM wParam, LPARAM lParam)
   if (message == WM_INITDIALOG)
   {
       dialog->Attach(dialogHWND);
+      {
+        #ifndef DWMWA_WINDOW_CORNER_PREFERENCE
+        #define DWMWA_WINDOW_CORNER_PREFERENCE 33
+        #endif
+        HMODULE hDwmModule = GetModuleHandle(TEXT("dwmapi.dll"));
+        if (!hDwmModule) hDwmModule = LoadLibrary(TEXT("dwmapi.dll"));
+        if (hDwmModule)
+        {
+          typedef HRESULT (WINAPI *DwmSetWindowAttributeProc)(HWND, DWORD, LPCVOID, DWORD);
+          DwmSetWindowAttributeProc pDwmSetWindowAttribute = (DwmSetWindowAttributeProc)GetProcAddress(hDwmModule, "DwmSetWindowAttribute");
+          if (pDwmSetWindowAttribute)
+          {
+            DWORD cornerPref = 2; // DWMWCP_ROUND
+            pDwmSetWindowAttribute(dialogHWND, DWMWA_WINDOW_CORNER_PREFERENCE, &cornerPref, sizeof(cornerPref));
+          }
+        }
+      }
 #ifdef ZIP7_DARKMODE
 #if defined(Z7_LANG)
       dmlib::initDarkModeEx(L"7zDark");

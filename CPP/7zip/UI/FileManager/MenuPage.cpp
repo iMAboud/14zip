@@ -51,26 +51,9 @@ struct CContextMenuItem
 
 static const CContextMenuItem kMenuItems[] =
 {
-  { IDS_CONTEXT_OPEN, kOpen },
-  { IDS_CONTEXT_OPEN, kOpenAs },
+  { IDS_CONTEXT_COMPRESS, kCompress },
   { IDS_CONTEXT_EXTRACT, kExtract },
   { IDS_CONTEXT_EXTRACT_HERE, kExtractHere },
-  { IDS_CONTEXT_EXTRACT_TO, kExtractTo },
-
-  { IDS_CONTEXT_TEST, kTest },
-
-  { IDS_CONTEXT_COMPRESS, kCompress },
-  { IDS_CONTEXT_COMPRESS_TO, kCompressTo7z },
-  { IDS_CONTEXT_COMPRESS_TO, kCompressToZip },
-
-  #ifndef UNDER_CE
-  { IDS_CONTEXT_COMPRESS_EMAIL, kCompressEmail },
-  { IDS_CONTEXT_COMPRESS_TO_EMAIL, kCompressTo7zEmail },
-  { IDS_CONTEXT_COMPRESS_TO_EMAIL, kCompressToZipEmail },
-  #endif
-
-  { IDS_PROP_CHECKSUM, kCRC },
-  { IDS_PROP_CHECKSUM, kCRC_Cascaded },
 };
 
 

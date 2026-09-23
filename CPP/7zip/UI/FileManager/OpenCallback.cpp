@@ -70,6 +70,11 @@ HRESULT COpenArchiveCallback::Open_CryptoGetTextPassword(BSTR *password)
     CPasswordDialog dialog;
     bool showPassword = NExtract::Read_ShowPassword();
     dialog.ShowPassword = showPassword;
+
+    UStringVector savedPasswords;
+    NExtract::LoadSavedPasswords(savedPasswords);
+    if (!savedPasswords.IsEmpty())
+      dialog.Password = savedPasswords[0];
    
     ProgressDialog.WaitCreating();
     if (dialog.Create(ProgressDialog) != IDOK)

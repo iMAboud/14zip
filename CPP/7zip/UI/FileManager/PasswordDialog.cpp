@@ -3,6 +3,7 @@
 #include "StdAfx.h"
 
 #include "PasswordDialog.h"
+#include "../Common/ZipRegistry.h"
 
 #ifdef Z7_LANG
 #include "LangUtils.h"
@@ -54,5 +55,7 @@ bool CPasswordDialog::OnButtonClicked(unsigned buttonID, HWND buttonHWND)
 void CPasswordDialog::OnOK()
 {
   ReadControls();
+  if (!Password.IsEmpty())
+    NExtract::SavePassword(Password);
   CModalDialog::OnOK();
 }

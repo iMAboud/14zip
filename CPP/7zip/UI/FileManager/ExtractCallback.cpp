@@ -689,6 +689,10 @@ Z7_COM7F_IMF(CExtractCallbackImp::CryptoGetTextPassword(BSTR *password))
     #ifndef Z7_SFX
     const bool showPassword = NExtract::Read_ShowPassword();
     dialog.ShowPassword = showPassword;
+    UStringVector savedPasswords;
+    NExtract::LoadSavedPasswords(savedPasswords);
+    if (!savedPasswords.IsEmpty())
+      dialog.Password = savedPasswords[0];
     #endif
     ProgressDialog->WaitCreating();
     if (dialog.Create(*ProgressDialog) != IDOK)
@@ -696,6 +700,7 @@ Z7_COM7F_IMF(CExtractCallbackImp::CryptoGetTextPassword(BSTR *password))
     Password = dialog.Password;
     PasswordIsDefined = true;
     #ifndef Z7_SFX
+    NExtract::SavePassword(Password);
     if (dialog.ShowPassword != showPassword)
       NExtract::Save_ShowPassword(dialog.ShowPassword);
     #endif

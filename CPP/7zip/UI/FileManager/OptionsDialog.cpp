@@ -31,25 +31,17 @@ using namespace NWindows;
 void OptionsDialog(HWND hwndOwner, HINSTANCE hInstance);
 void OptionsDialog(HWND hwndOwner, HINSTANCE /* hInstance */)
 {
-  CSystemPage systemPage;
   CMenuPage menuPage;
-  CFoldersPage foldersPage;
-  CEditPage editPage;
   CSettingsPage settingsPage;
-  CLangPage langPage;
 
   CObjectVector<NControl::CPageInfo> pages;
   BIG_DIALOG_SIZE(200, 200);
 
   const UINT pageIDs[] = {
-      SIZED_DIALOG(IDD_SYSTEM),
       SIZED_DIALOG(IDD_MENU),
-      SIZED_DIALOG(IDD_FOLDERS),
-      SIZED_DIALOG(IDD_EDIT),
-      SIZED_DIALOG(IDD_SETTINGS),
-      SIZED_DIALOG(IDD_LANG) };
+      SIZED_DIALOG(IDD_SETTINGS) };
 
-  NControl::CPropertyPage *pagePointers[] = { &systemPage,  &menuPage, &foldersPage, &editPage, &settingsPage, &langPage };
+  NControl::CPropertyPage *pagePointers[] = { &menuPage, &settingsPage };
   
   for (unsigned i = 0; i < Z7_ARRAY_SIZE(pageIDs); i++)
   {
@@ -65,25 +57,7 @@ void OptionsDialog(HWND hwndOwner, HINSTANCE /* hInstance */)
   
   if (res != -1 && res != 0)
   {
-    if (langPage.LangWasChanged)
-    {
-      // g_App._window.SetText(LangString(IDS_APP_TITLE, 0x03000000));
-      MyLoadMenu(true); // needResetMenu
-      g_App.ReloadToolbars();
-      g_App.MoveSubWindows(); // we need it to change list window aafter _toolBar.AutoSize();
-      g_App.ReloadLangItems();
-    }
-  
-    /*
-    if (systemPage.WasChanged)
-    {
-      // probably it doesn't work, since image list is locked?
-      g_App.SysIconsWereChanged();
-    }
-    */
-    
     g_App.SetListSettings();
     g_App.RefreshAllPanels();
-    // ::PostMessage(hwndOwner, kLangWasChangedMessage, 0 , 0);
   }
 }

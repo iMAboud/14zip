@@ -48,6 +48,9 @@ namespace NExtract
 
   void Save_LimitGB(UInt32 limit_GB);
   UInt32 Read_LimitGB();
+
+  void LoadSavedPasswords(UStringVector &passwords);
+  void SavePassword(const UString &password);
 }
 
 namespace NCompression

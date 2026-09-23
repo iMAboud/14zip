@@ -601,27 +601,47 @@ bool CCompressDialog::OnInit()
   UpdatePasswordControl();
 
   {
-    const bool needSetMain = (Info.FormatIndex < 0);
+    m_Format.ResetContent();
+
+    int rarIndex = -1, zipIndex = -1, sevenzIndex = -1;
     FOR_VECTOR(i, ArcIndices)
     {
       const unsigned arcIndex = ArcIndices[i];
       const CArcInfoEx &ai = (*ArcFormats)[arcIndex];
-      const int index = (int)m_Format.AddString_SetItemData(ai.Name, (LPARAM)arcIndex);
-      if (!needSetMain)
+      if (ai.Name.IsEqualTo_Ascii_NoCase("rar"))
+        rarIndex = (int)arcIndex;
+      else if (ai.Name.IsEqualTo_Ascii_NoCase("zip"))
+        zipIndex = (int)arcIndex;
+      else if (ai.Name.IsEqualTo_Ascii_NoCase("7z"))
+        sevenzIndex = (int)arcIndex;
+    }
+    if (zipIndex < 0 && ArcFormats)
+    {
+      FOR_VECTOR(i, *ArcFormats)
       {
-        if (Info.FormatIndex == (int)arcIndex)
-          m_Format.SetCurSel(index);
-        continue;
-      }
-      if (i == 0 || ai.Name.IsEqualTo_NoCase(m_RegistryInfo.ArcType))
-      {
-        m_Format.SetCurSel(index);
-        Info.FormatIndex = (int)arcIndex;
+        if ((*ArcFormats)[i].Name.IsEqualTo_Ascii_NoCase("zip")) { zipIndex = (int)i; break; }
       }
     }
+    if (sevenzIndex < 0 && ArcFormats)
+    {
+      FOR_VECTOR(i, *ArcFormats)
+      {
+        if ((*ArcFormats)[i].Name.IsEqualTo_Ascii_NoCase("7z")) { sevenzIndex = (int)i; break; }
+      }
+    }
+
+    int idxRar = (int)m_Format.AddString_SetItemData(L"rar", (LPARAM)(rarIndex >= 0 ? rarIndex : (zipIndex >= 0 ? zipIndex : 0)));
+    int idxZip = (int)m_Format.AddString_SetItemData(L"zip", (LPARAM)(zipIndex >= 0 ? zipIndex : 0));
+    int idx7z = (int)m_Format.AddString_SetItemData(L"7z", (LPARAM)(sevenzIndex >= 0 ? sevenzIndex : 0));
+
+    m_Format.SetCurSel(idxRar);
+    Info.FormatIndex = (int)m_Format.GetItemData(idxRar);
   }
 
-  CheckButton(IDX_COMPRESS_SFX, Info.SFXMode);
+  HideItem(IDX_COMPRESS_SFX);
+  HideItem(IDX_COMPRESS_SHARED);
+  HideItem(IDX_COMPRESS_DEL);
+  HideItem(IDG_COMPRESS_OPTIONS);
 
   {
     UString fileName;
@@ -1781,7 +1801,8 @@ void CCompressDialog::SetLevel2()
     }
     m_Level.AddString_SetItemData(s, (LPARAM)Z7_ZSTD_ULTIMATE_LEV);
   }
-  SetNearestSelectComboBox(m_Level, level);
+  if (m_Level.GetCount() > 0)
+    m_Level.SetCurSel(m_Level.GetCount() - 1);
 }
 
 

@@ -1,7 +1,7 @@
-#define MY_VER_MAJOR 26
-#define MY_VER_MINOR 3
+#define MY_VER_MAJOR 1
+#define MY_VER_MINOR 0
 #define MY_VER_BUILD 0
-#define MY_VERSION_NUMBERS "26.03 ZS v1.5.7 R1"
+#define MY_VERSION_NUMBERS "1.0.0 (ZaZ)"
 #define MY_VERSION MY_VERSION_NUMBERS
 
 #ifdef MY_CPU_NAME
@@ -15,7 +15,7 @@
 #undef MY_VERSION_COPYRIGHT_DATE
 #define MY_AUTHOR_NAME "Igor Pavlov, Tino Reichardt, Sergey G. Brester"
 #define MY_COPYRIGHT_PD "Igor Pavlov : Public domain"
-#define MY_COPYRIGHT_CR "Copyright (c) 1999- Igor Pavlov, 2016- Tino Reichardt, 2022- Sergey G. Brester"
+#define MY_COPYRIGHT_CR "ZaZ File Archiver"
 
 #ifdef USE_COPYRIGHT_CR
   #define MY_COPYRIGHT MY_COPYRIGHT_CR
